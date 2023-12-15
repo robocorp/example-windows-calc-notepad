@@ -27,8 +27,7 @@ def add_numbers_with_calculator(*numbers: int) -> str:
     calc_window = windows.find_window(LOCATORS.CALCULATOR)
     plus_button = calc_window.find("id:plusButton")
     for number in numbers:
-        nr_button = calc_window.find(f"id:num{number}Button")
-        nr_button.click()
+        calc_window.click(f"id:num{number}Button")
         plus_button.click()
     display = calc_window.find("id:CalculatorResults")
     result = display.name.rsplit(" ", 1)[-1]  # pull the total from "Display is <nr>"
