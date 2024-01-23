@@ -8,8 +8,8 @@ desktop = windows.Desktop()
 
 
 class LOCATORS:
-    CALCULATOR = "name:Calculator"
-    NOTEPAD = "class:Notepad subname:Notepad"
+    CALCULATOR = 'name:"Calculator"'
+    NOTEPAD = 'class:"Notepad" subname:"Notepad"'
 
 
 @setup
