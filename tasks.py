@@ -99,6 +99,6 @@ def save_text_with_notepad(text: str, *, path: Path):
 def compute_numbers():
     """Do a computation in Calculator and store the result with Notepad."""
     result = add_numbers_with_calculator(1, 2, 3, 4)
-    output_file = Path(".") / "output" / "results.txt"
+    output_file = Path(".") / "output" / "result.txt"
     output_file.parent.mkdir(exist_ok=True)
     save_text_with_notepad(result, path=output_file)
