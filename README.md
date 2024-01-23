@@ -1,6 +1,6 @@
 # Add numbers in Calculator and save result with Notepad
 
-In this Windows example we'll take the the Calculator and Notepad automation further,
+In this Windows example we'll take the Calculator and Notepad automation further,
 by show-casing how two apps can be operated at the same time, while the data obtained
 in one can be extracted and provided to the other.
 
@@ -8,7 +8,7 @@ in one can be extracted and provided to the other.
 
 1. Open both Calculator and Notepad apps.
 2. Add some numbers in a loop using Calculator.
-3. Retrieve the result and place it in the text editor area under Notepad.
+3. Retrieve the result and place it in the text edit area under Notepad.
 4. Save the content in the [*result.txt*](output/result.txt) output file.
 5. Close both apps as clean-up.
 
