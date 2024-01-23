@@ -26,7 +26,7 @@ class LOCATORS:  # gather here all the locators for convenience
         CALC_NUMBER = 'type:"Button" name:"{}"'
         CALC_DISPLAY = 'type:"Text" name:"Result"'
         NOTE_EDITOR = 'name:"Text Editor"'
-        NOTE_SAVE = 'name:"Save Ss"'
+        NOTE_SAVE = 'name:"Save As"'
 
 
 def get_win_version() -> str:
@@ -56,7 +56,7 @@ def open_close_apps(task):
     desktop.windows_run("calc.exe")
     desktop.windows_run("notepad.exe")
     yield
-    both_apps = f"({LOCATORS.CALCULATOR}) or ({LOCATORS.NOTEPAD})"
+    both_apps = f"{LOCATORS.CALCULATOR} or {LOCATORS.NOTEPAD}"
     desktop.close_windows(both_apps)
 
 
