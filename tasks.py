@@ -1,3 +1,4 @@
+import platform
 from pathlib import Path
 
 from robocorp import windows
@@ -10,6 +11,36 @@ desktop = windows.Desktop()
 class LOCATORS:
     CALCULATOR = 'name:"Calculator"'
     NOTEPAD = 'class:"Notepad" subname:"Notepad"'
+
+    class WINDOWS_11:
+        CALC_PLUS = 'id:"plusButton"'
+        CALC_NUMBER = 'id:"num{}Button"'
+        CALC_DISPLAY = 'id:"CalculatorResults"'
+
+    class WINDOWS_SERVER:
+        CALC_PLUS = 'type:"Button" name:"Add"'
+        CALC_NUMBER = 'type:"Button" name:"{}"'
+        CALC_DISPLAY = 'type:"Text" name:"Result"'
+
+
+def get_win_version() -> str:
+    """Windows only utility which returns the current Windows major version."""
+    # Windows terminal `ver` command is bugged, until that's fixed, check by build
+    #  number. (the same applies for `platform.version()`)
+    WINDOWS_10_VERSION = "10"
+    WINDOWS_11_BUILD = 22000
+    version_parts = platform.version().split(".")
+    major = version_parts[0]
+    if major == WINDOWS_10_VERSION and int(version_parts[2]) >= WINDOWS_11_BUILD:
+        major = "11"
+
+    return major
+
+
+IS_WINDOWS_11 = get_win_version() == "11"
+WIN_LOCATORS = (
+    LOCATORS.WINDOWS_11 if IS_WINDOWS_11 else LOCATORS.WINDOWS_SERVER
+)
 
 
 @setup
@@ -25,12 +56,17 @@ def open_apps(task):
 def add_numbers_with_calculator(*numbers: int) -> str:
     """Add an arbitrary list of numbers and return their result."""
     calc_window = windows.find_window(LOCATORS.CALCULATOR)
-    plus_button = calc_window.find("id:plusButton")
+    plus_button = calc_window.find(WIN_LOCATORS.CALC_PLUS)
     for number in numbers:
-        calc_window.click(f"id:num{number}Button")
+        calc_window.click(WIN_LOCATORS.CALC_NUMBER.format(number))
         plus_button.click()
-    display = calc_window.find("id:CalculatorResults")
-    result = display.name.rsplit(" ", 1)[-1]  # pull the total from "Display is <nr>"
+    display = calc_window.find(WIN_LOCATORS.CALC_DISPLAY)
+    if IS_WINDOWS_11:
+        # Pull the total from "Display is <nr>".
+        result = display.name.rsplit(" ", 1)[-1]
+    else:
+        # Should support the "Value" pattern.
+        result = display.get_value()
     return result
 
 
