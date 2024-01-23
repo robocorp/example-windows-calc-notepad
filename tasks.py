@@ -8,19 +8,25 @@ from robocorp.tasks import setup, task
 desktop = windows.Desktop()
 
 
-class LOCATORS:
+class LOCATORS:  # gather here all the locators for convenience
+    # Common locators.
     CALCULATOR = 'name:"Calculator"'
     NOTEPAD = 'class:"Notepad" subname:"Notepad"'
 
+    # Platform specific ones.
     class WINDOWS_11:
         CALC_PLUS = 'id:"plusButton"'
         CALC_NUMBER = 'id:"num{}Button"'
         CALC_DISPLAY = 'id:"CalculatorResults"'
+        NOTE_EDITOR = 'name:"Text editor"'
+        NOTE_SAVE = 'name:"Save as"'
 
     class WINDOWS_SERVER:
         CALC_PLUS = 'type:"Button" name:"Add"'
         CALC_NUMBER = 'type:"Button" name:"{}"'
         CALC_DISPLAY = 'type:"Text" name:"Result"'
+        NOTE_EDITOR = 'name:"Text Editor"'
+        NOTE_SAVE = 'name:"Save Ss"'
 
 
 def get_win_version() -> str:
@@ -37,6 +43,7 @@ def get_win_version() -> str:
     return major
 
 
+# Based on the Windows version, operate with a specific set of locators.
 IS_WINDOWS_11 = get_win_version() == "11"
 WIN_LOCATORS = (
     LOCATORS.WINDOWS_11 if IS_WINDOWS_11 else LOCATORS.WINDOWS_SERVER
@@ -44,7 +51,7 @@ WIN_LOCATORS = (
 
 
 @setup
-def open_apps(task):
+def open_close_apps(task):
     """Open Calculator and Notepad to automate them, then close both at the end."""
     desktop.windows_run("calc.exe")
     desktop.windows_run("notepad.exe")
@@ -66,17 +73,18 @@ def add_numbers_with_calculator(*numbers: int) -> str:
         result = display.name.rsplit(" ", 1)[-1]
     else:
         # Should support the "Value" pattern.
-        result = display.get_value()
+        result = str(display.get_value())
     return result
 
 
 def save_text_with_notepad(text: str, *, path: Path):
     """Writes the result in the text editor then saves it in a text file."""
     notepad_window = windows.find_window(LOCATORS.NOTEPAD)
-    text_edit = notepad_window.find("name:Text editor")
+    text_edit = notepad_window.find(WIN_LOCATORS.NOTE_EDITOR)
     text_edit.set_value(text)
-    notepad_window.send_keys("{Ctrl}{Shift}s")
-    save_as_window = notepad_window.find_child_window("name:Save as")
+    save_as = "{Ctrl}{Shift}s" if IS_WINDOWS_11 else "{Ctrl}s"
+    notepad_window.send_keys(save_as)
+    save_as_window = notepad_window.find_child_window(WIN_LOCATORS.NOTE_SAVE)
     save_as_window.send_keys("{LAlt}n{Back}")
     save_as_window.send_keys(str(path.absolute()), send_enter=True)
     confirmation_window = save_as_window.find_child_window(
