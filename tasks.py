@@ -29,22 +29,8 @@ class LOCATORS:  # gather here all the locators for convenience
         NOTE_SAVE = 'name:"Save As"'
 
 
-def get_win_version() -> str:
-    """Windows only utility which returns the current Windows major version."""
-    # Windows terminal `ver` command is bugged, until that's fixed, check by build
-    #  number. (the same applies for `platform.version()`)
-    WINDOWS_10_VERSION = "10"
-    WINDOWS_11_BUILD = 22000
-    version_parts = platform.version().split(".")
-    major = version_parts[0]
-    if major == WINDOWS_10_VERSION and int(version_parts[2]) >= WINDOWS_11_BUILD:
-        major = "11"
-
-    return major
-
-
 # Based on the Windows version, operate with a specific set of locators.
-IS_WINDOWS_11 = get_win_version() == "11"
+IS_WINDOWS_11 = desktop.get_win_version() == "11"
 WIN_LOCATORS = (
     LOCATORS.WINDOWS_11 if IS_WINDOWS_11 else LOCATORS.WINDOWS_SERVER
 )
